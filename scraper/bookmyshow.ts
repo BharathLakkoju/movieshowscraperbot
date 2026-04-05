@@ -7,8 +7,19 @@ function getTheatreConfig(theatreName: string): TheatreConfig | undefined {
 }
 
 function todayDateStr(): string {
-  const d = new Date();
-  return `${d.getFullYear()}${String(d.getMonth() + 1).padStart(2, "0")}${String(d.getDate()).padStart(2, "0")}`;
+  const timeZone = process.env.APP_TIMEZONE ?? process.env.CRON_TIMEZONE ?? "Asia/Kolkata";
+  const parts = new Intl.DateTimeFormat("en-US", {
+    timeZone,
+    year: "numeric",
+    month: "2-digit",
+    day: "2-digit",
+  }).formatToParts(new Date());
+
+  const year = parts.find((p) => p.type === "year")?.value ?? "";
+  const month = parts.find((p) => p.type === "month")?.value ?? "";
+  const day = parts.find((p) => p.type === "day")?.value ?? "";
+
+  return `${year}${month}${day}`;
 }
 
 function toSlug(name: string): string {

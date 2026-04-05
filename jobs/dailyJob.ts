@@ -8,7 +8,22 @@ import { formatDailyDigest } from "../services/formatter.js";
 import { sendMessage } from "../services/telegram.js";
 import { pool } from "../db/client.js";
 
-const today = () => new Date().toISOString().split("T")[0]!;
+const APP_TIMEZONE = process.env.APP_TIMEZONE ?? process.env.CRON_TIMEZONE ?? "Asia/Kolkata";
+
+const today = () => {
+  const parts = new Intl.DateTimeFormat("en-US", {
+    timeZone: APP_TIMEZONE,
+    year: "numeric",
+    month: "2-digit",
+    day: "2-digit",
+  }).formatToParts(new Date());
+
+  const year = parts.find((p) => p.type === "year")?.value ?? "";
+  const month = parts.find((p) => p.type === "month")?.value ?? "";
+  const day = parts.find((p) => p.type === "day")?.value ?? "";
+
+  return `${year}-${month}-${day}`;
+};
 
 async function scrapeAndCache(): Promise<void> {
   const theatres = await getActiveTheatres();
@@ -62,12 +77,12 @@ async function sendNotifications(): Promise<void> {
 }
 
 export async function runJob(): Promise<void> {
-  console.log(`[${new Date().toISOString()}] Daily job started`);
+  console.log(`[${new Date().toISOString()}] Daily job started for ${today()} (${APP_TIMEZONE})`);
 
   await scrapeAndCache();
   await sendNotifications();
 
-  console.log(`[${new Date().toISOString()}] Daily job completed`);
+  console.log(`[${new Date().toISOString()}] Daily job completed for ${today()} (${APP_TIMEZONE})`);
 }
 
 // When run directly (e.g., from GitHub Actions cron)

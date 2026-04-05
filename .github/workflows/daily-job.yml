@@ -34,4 +34,6 @@ jobs:
           DATABASE_URL: ${{ secrets.DATABASE_URL }}
           ENABLE_BOT: "false"
           ENABLE_SCHEDULER: "false"
+          TZ: Asia/Kolkata
+          APP_TIMEZONE: Asia/Kolkata
         run: npm run job
