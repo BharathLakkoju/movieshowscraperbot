@@ -6,7 +6,7 @@ import { bot } from "./bot/index.js";
 import { runJob } from "./jobs/dailyJob.js";
 
 const enableBot = process.env.ENABLE_BOT !== "false";
-const enableScheduler = process.env.ENABLE_SCHEDULER !== "false";
+const enableScheduler = process.env.ENABLE_SCHEDULER === "true";
 const cronSchedule = process.env.CRON_SCHEDULE ?? "0 8 * * *";
 const cronTimezone = process.env.CRON_TIMEZONE ?? "Asia/Kolkata";
 

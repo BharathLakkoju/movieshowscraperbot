@@ -1,0 +1,35 @@
+services:
+  - type: worker
+    name: cineping-bot
+    runtime: node
+    plan: starter
+    buildCommand: npm install && npm run build
+    preDeployCommand: npm run migrate
+    startCommand: npm run start:worker
+    autoDeployTrigger: commit
+    envVars:
+      - key: BOT_TOKEN
+        sync: false
+      - key: DATABASE_URL
+        sync: false
+      - key: ENABLE_BOT
+        value: "true"
+      - key: ENABLE_SCHEDULER
+        value: "false"
+
+  - type: cron
+    name: cineping-daily-job
+    runtime: node
+    plan: starter
+    schedule: "30 2 * * *"
+    buildCommand: npm install && npm run build
+    startCommand: npm run job:prod
+    envVars:
+      - key: BOT_TOKEN
+        sync: false
+      - key: DATABASE_URL
+        sync: false
+      - key: ENABLE_BOT
+        value: "false"
+      - key: ENABLE_SCHEDULER
+        value: "false"
